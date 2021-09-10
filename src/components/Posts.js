@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 
 const Posts = ({ syncPost }) => {
-    console.log(syncPost);
     return (
         syncPost.length 
             ? syncPost.map((post) => <Post key = { post.id } post = { post }/>)

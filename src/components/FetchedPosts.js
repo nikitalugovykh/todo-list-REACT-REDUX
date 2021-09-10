@@ -14,7 +14,6 @@ export default () => {
     const loading = useSelector((state) => {
         return state.app.loading
     })
-    console.log(loading);
     return (
         loading
         ? <div className="spinner-border" role="status"></div> 

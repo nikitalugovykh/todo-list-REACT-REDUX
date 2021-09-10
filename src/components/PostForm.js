@@ -1,14 +1,15 @@
 import React from 'react';
 import { v4 } from 'uuid';
 import { connect } from 'react-redux'
-import { createPost } from '../redux/actions';
+import { createPost, showAlert, hideAlert } from '../redux/actions';
+import { Alert } from './Alert';
 
 
 class PostForm extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            title: ''
+            title: '',
         }
         this.submitHandler = this.submitHandler.bind(this);
         this.changeInputHandler = this.changeInputHandler.bind(this);
@@ -22,7 +23,10 @@ class PostForm extends React.Component {
             title, id: v4()
         }
 
-        if (title.trim() === '') return 
+        if (title.trim() === '') {
+            return this.props.showAlert('Вы забыли ввести текст')
+        }
+        
 
         this.props.createPost(newPost)
 
@@ -39,6 +43,9 @@ class PostForm extends React.Component {
     render (){
         return (
             <form onSubmit = {this.submitHandler}>
+
+                {this.props.alert && <Alert text = {this.props.alert}/>}
+
                 <div className="mb-3">
                     <label htmlFor="title" className="form-label">Заголовок поста</label>
                     <input 
@@ -52,13 +59,21 @@ class PostForm extends React.Component {
                     <button className = 'btn btn-success mt-3' type = 'submit'>Создать</button>
                 </div>
 
-            </form>
+                </form>
         )
     }
 }
 
 const mapDispatchToProps = {
-    createPost: createPost
+    createPost: createPost,
+    showAlert,
+    hideAlert
 }
 
-export default connect(null,mapDispatchToProps)(PostForm)
+const mapStateToProps = state => {
+    return {
+        alert: state.app.alert
+
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(PostForm)
