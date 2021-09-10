@@ -1,4 +1,4 @@
-import { CREATE_POST, FETCH_POST } from "./actionType";
+import { CREATE_POST, FETCH_POST, HIDE_LOADER, SHOW_LOADER } from "./actionType";
 
 export function createPost( post ) {
     return {
@@ -6,14 +6,51 @@ export function createPost( post ) {
         payload: post
     }
 }
-export function fetchPost ( ) {
-    return async function (dispatch) {
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5');
-        const json = await response.json();
-        console.log(json);
-        dispatch({
-            type: FETCH_POST,
-            payload: json
+export function fetchPost () {
+   return function (dispatch) {
+    dispatch(showLoader());
+    setTimeout(()=> {
+        return new Promise ((resolve, reject) => {
+            const xhr = new XMLHttpRequest()
+            xhr.open('GET', 'https://jsonplaceholder.typicode.com/posts/?_limit=5')
+ 
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    resolve(JSON.parse(xhr.response))
+                } else {
+                    reject(new Error (xhr.statusText))
+                }
+            }
+            xhr.onerror = () => {
+                 return new Error('Ошибка в загрузке')
+            }
+ 
+            xhr.send()
+        }).then((data)=> {
+            dispatch({
+                 type: FETCH_POST,
+                 payload: data
+             });
+             dispatch(hideLoader())
+        }).catch((err) => {
+            return new Error(err)
         })
-    }    
+    },3000)        
+
+
+   }
+}
+
+export function showLoader() {
+    return {
+        type: SHOW_LOADER,
+        loading: true
+    }
+}
+
+export function hideLoader() {
+    return {
+        type: HIDE_LOADER,
+        loading: false
+    }
 }

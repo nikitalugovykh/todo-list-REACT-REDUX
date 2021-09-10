@@ -11,17 +11,25 @@ export default () => {
     const posts = useSelector((state) => {
         return state.posts.fetchedPost
     })
-
+    const loading = useSelector((state) => {
+        return state.app.loading
+    })
+    console.log(loading);
     return (
-        (posts.length) 
-            ? posts.map((post,i) => <Post key = {post.id} post = {post}/>)
+        loading
+        ? <div className="spinner-border" role="status"></div> 
+        : ((posts.length) 
+            ? posts.map((post) => <Post key = {post.id} post = {post}/>)
             : <div>
                 <p>Данные отсутствуют</p>
                 <button 
                     className = 'btn btn-primary' 
-                    onClick = {()=> dispatch(fetchPost())}
+                    onClick = {()=> {
+                        dispatch(fetchPost());
+                    }}
                 >
                 Загрузить</button>
             </div>
+        )
     )
 }
